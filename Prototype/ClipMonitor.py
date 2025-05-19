@@ -1,5 +1,4 @@
 import pyperclip
-import time
 
 '''
 In this python script I m going to write the code logic in this way
@@ -26,20 +25,24 @@ so we will fetch all content into a string and store in a clip board
 '''
 
 class Clipboard:
-  def __init__(self):
-    pass
   
+  def __init__(self):
+    self.content = None
+  
+  def isChanged(self):
+    return self.content != self.getClipboardContent()
+
   def copy(self,content):
     pyperclip.copy(content)
   
   def getClipboardContent(self):
     return pyperclip.paste()
   
-  def saveToFile(self,content):
+  def saveToFile(self):
     with open("temp.txt","w") as file:
-      file.write(content)
+      file.write(self.getClipboardContent())
   
-  def readFromFile(self,content):
+  def readFromFile(self):
     content = ""
     with open("temp.txt","r") as file:
         content += file.read()

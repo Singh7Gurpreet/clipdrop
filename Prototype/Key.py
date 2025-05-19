@@ -7,6 +7,15 @@ import json
 from dotenv import load_dotenv
 load_dotenv()
 
+'''
+Dev note:
+
+Future refrence will be adding images too
+and also need to add function verify() related to verification of user authentication
+or i could some how work around it like would be checking with get /api/file
+if I get 403 (unauthorized) simply call login agin
+'''
+
 class Key:
     def __init__(self):
         self.__path = "jwt.txt"
@@ -21,7 +30,6 @@ class Key:
                     if(resp.status == 200):
                       data = await resp.text()
                       data = json.loads(data)
-                      print(data)
                       with open(self.__path, "w") as file:
                           file.write(data["token"])
                       self.__keyValue = data["token"]
@@ -46,11 +54,3 @@ class Key:
 
     def getKeyValue(self):
         return self.__keyValue
-
-
-# --- Driver code ---
-async def main():
-    l1 = Key()
-    await l1.initialize()
-
-asyncio.run(main())
