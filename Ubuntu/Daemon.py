@@ -11,6 +11,7 @@ import asyncio
 import os
 import aiohttp
 from dotenv import load_dotenv
+import requests
 load_dotenv()
 
 class Daemon:
@@ -28,15 +29,20 @@ class Daemon:
         }
 
     async def poll(self):
+
+      link = None
+      
       try:
           async with aiohttp.ClientSession() as session:
               async with session.get(os.getenv("BACKEND_URL"), cookies=self.cookie) as response:
                   if response.status == 200:
                       data = await response.json()
-                      print("Success:", data)
+                      link = data["link"]
                   else:
                       print(f"Error {response.status}: {await response.text()}")
-                      pass
+                  
+                  if(link != None):
+                    await session.get(link)
       except aiohttp.ClientError as e:
           print(f"Request failed: {e}")
 
@@ -56,10 +62,11 @@ class Daemon:
       while True:
           await asyncio.sleep(3)
           if(self.clipboard.isChanged()):
+            requests.delete(os.getenv("BACKEND_URL"))
             self.clipboard.saveToFile()
             await self.uploadContent()
           else:
-             self.poll()
+            await self.poll()
           
 
 

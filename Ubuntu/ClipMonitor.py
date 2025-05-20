@@ -30,7 +30,10 @@ class Clipboard:
     self.content = None
   
   def isChanged(self):
-    return self.content != self.getClipboardContent()
+    result = self.content != self.getClipboardContent()
+    self.content = self.getClipboardContent()
+    print(self.content,result,self.getClipboardContent(),sep="\n")
+    return result
 
   def copy(self,content):
     pyperclip.copy(content)
@@ -47,11 +50,3 @@ class Clipboard:
     with open("temp.txt","r") as file:
         content += file.read()
     return content
-  
-
-# while True:
-#     current_clipboard = pyperclip.paste()
-#     if current_clipboard != last_clipboard:
-#         print(f"📋 New Clipboard Content: {current_clipboard}")
-#         last_clipboard = current_clipboard
-#     time.sleep(1)  # check every 1 second

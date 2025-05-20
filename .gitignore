@@ -2,3 +2,4 @@
 /venv
 jwt.txt
 temp.txt
+__pycache__
