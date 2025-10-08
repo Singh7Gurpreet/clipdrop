@@ -30,9 +30,9 @@ class Clipboard:
     self.content = None
   
   def isChanged(self):
-    result = self.content != self.getClipboardContent()
+    result = (self.content != self.getClipboardContent() and self.getClipboardContent() != "")
     self.content = self.getClipboardContent()
-    print(self.content,result,self.getClipboardContent(),sep="\n")
+    print(result)
     return result
 
   def copy(self,content):
@@ -42,11 +42,13 @@ class Clipboard:
     return pyperclip.paste()
   
   def saveToFile(self):
-    with open("temp.txt","w") as file:
+    with open("text.txt","w") as file:
       file.write(self.getClipboardContent())
   
-  def readFromFile(self):
+  async def readFromFile(self):
     content = ""
-    with open("temp.txt","r") as file:
+    with open("text.txt","r") as file:
         content += file.read()
+    print(content)
     return content
+  
