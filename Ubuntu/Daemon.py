@@ -31,7 +31,6 @@ class Daemon:
         if resp.status == 200:
             filename = "text.txt"
 
-
             async with aiofiles.open(filename, 'wb') as f:
                 while True:
                     chunk = await resp.content.read(1024)
