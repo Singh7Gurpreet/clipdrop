@@ -37,17 +37,24 @@ class Key:
         webbrowser.open(f"{os.getenv('BACKEND_URL_AUTHENTICATION')}?uuid={session}")
         await self.__pollForKey(session)
 
+    # verify is it valid or not 
     def __readTokenFromFile(self):
-        content = ""
-        with open(self.__path, "r") as file:
-            content = file.read()
+        file = FileHandler(self.__path)
+        content = file.read_from_file()
         return content
 
     async def initialize(self):
         if not os.path.exists(self.__path):
             await self.__login()
         else:
-            self.__keyValue = self.__readTokenFromFile()
+            temporaryKey = self.__readTokenFromFile()
+            api = PersonalBinApi()
+            api.set_cookie(temporaryKey)
+            response = await api.is_jwt_verified()
+            if(response == False):
+                await self.__login()
+            else:
+                self.__keyValue = temporaryKey
 
     def getKeyValue(self):
         return self.__keyValue

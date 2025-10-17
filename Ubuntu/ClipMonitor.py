@@ -32,7 +32,6 @@ class Clipboard:
   def isChanged(self):
     result = (self.content != self.getClipboardContent() and self.getClipboardContent() != "")
     self.content = self.getClipboardContent()
-    print(result)
     return result
 
   def copy(self,content):

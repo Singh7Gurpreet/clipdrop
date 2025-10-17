@@ -43,7 +43,7 @@ class BleClient:
 
     async def start_notifications(self):
         for uuid, char in self._notify_chars.items():
-            await self.client.start_notify(char, self._make_notifier(uuid))
+            self.client.start_notify(char, self._make_notifier(uuid))
             print(f"🔔 Listening to notifications on {uuid}")
 
     def _make_notifier(self, uuid):
