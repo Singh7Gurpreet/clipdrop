@@ -19,6 +19,10 @@ class PersonalBinApi:
          "token":f"{key}"
         }
   
+  async def initializeKey(self):
+    self.key = Key()
+    await self.key.initialize()
+  
   async def get_key(self,param: dict):
       url = os.getenv("BACKEND_URL_GETKEY")
       async with httpx.AsyncClient() as client:

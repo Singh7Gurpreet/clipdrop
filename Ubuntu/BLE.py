@@ -8,6 +8,12 @@ class BleClient:
         self._notify_chars = {}
         self._write_chars = {}
 
+    def isConnected(self) -> bool:
+        if self.client and self.client.is_connected:
+            return True
+        else:
+            return False
+
     async def connect(self, scan_timeout=10):
         print(f"🔍 Scanning for devices advertising {self.service_uuid}...")
         device = await BleakScanner.find_device_by_filter(
@@ -35,6 +41,9 @@ class BleClient:
         print("✅ Characteristics discovered:")
         for uuid in self._notify_chars: print(f"  - Notify: {uuid}")
         for uuid in self._write_chars: print(f"  - Write:  {uuid}")
+        await self.client.__aenter__()
+        self.client.disconnected_callback = self.disconnect
+
 
     # register callback for received data on specific UUID
     def on_receive(self, uuid, callback):
@@ -43,7 +52,7 @@ class BleClient:
 
     async def start_notifications(self):
         for uuid, char in self._notify_chars.items():
-            self.client.start_notify(char, self._make_notifier(uuid))
+            await self.client.start_notify(char, self._make_notifier(uuid))
             print(f"🔔 Listening to notifications on {uuid}")
 
     def _make_notifier(self, uuid):
@@ -51,7 +60,7 @@ class BleClient:
             cb = self._callbacks.get(uuid)
             if cb:
                 try:
-                    cb(data.decode(errors="ignore"))
+                    cb(data.decode("utf-8"))
                 except Exception as e:
                     print(f"⚠️ Error in callback for {uuid}: {e}")
             else:
