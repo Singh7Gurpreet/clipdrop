@@ -1,5 +1,6 @@
+import os
 class FileHandler:
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         self.filename = filename
 
     def write_to_file(self, content):
@@ -21,3 +22,8 @@ class FileHandler:
         except Exception as e:
             print(f"Error reading file: {e}")
             return ""
+
+    def moveFileFromSourceToClipBoard(self,source):
+        # can use factory design pattern to handle in different
+        # opearting system
+        os.system(f" osascript -e 'set the clipboard to POSIX file \"{source}\"'")

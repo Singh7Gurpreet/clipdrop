@@ -23,14 +23,14 @@ class BleClient:
         if device is None:
             raise RuntimeError("❌ No device found advertising the target service")
 
-        print(f"✅ Found device: {device.name} [{device.address}]")
+        print(f"Found device: {device.name} [{device.address}]")
         self.client = BleakClient(device)
         await self.client.__aenter__()
-        print("✅ Connected:", self.client.is_connected)
+        print("Connected:", self.client.is_connected)
 
         service = self.client.services.get_service(self.service_uuid)
         if service is None:
-            raise RuntimeError("❌ Service not found after connection")
+            raise RuntimeError("Service not found after connection")
 
         for char in service.characteristics:
             if "notify" in char.properties:
@@ -38,7 +38,7 @@ class BleClient:
             if "write" in char.properties:
                 self._write_chars[char.uuid.lower()] = char
 
-        print("✅ Characteristics discovered:")
+        print("Characteristics discovered:")
         for uuid in self._notify_chars: print(f"  - Notify: {uuid}")
         for uuid in self._write_chars: print(f"  - Write:  {uuid}")
         await self.client.__aenter__()
@@ -62,7 +62,7 @@ class BleClient:
                 try:
                     cb(data.decode("utf-8"))
                 except Exception as e:
-                    print(f"⚠️ Error in callback for {uuid}: {e}")
+                    print(f"Error in callback for {uuid}: {e}")
             else:
                 print(f"[Notify] {uuid}: {data}")
         return _callback

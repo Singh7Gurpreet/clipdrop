@@ -7,5 +7,5 @@ class Events(Enum):
 
 class EventHandler(ABC):
     @abstractmethod
-    def execute(self):
+    async def execute(self):
         pass

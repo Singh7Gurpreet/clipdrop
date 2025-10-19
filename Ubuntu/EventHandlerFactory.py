@@ -1,8 +1,8 @@
 from BLEClipboardEventHandler import BLEClipboardEventHandler
 from BLEStorageEventHandler import BLEStorageEventHandler
-from EventsHanlder import *
+from EventsHandler import *
 
-def factory(event: Events) -> EventHandler:
+def eventFactory(event: Events) -> EventHandler:
     if event == Events.CLIPBOARD_DATA.value:
         return BLEClipboardEventHandler()
     elif event == Events.STORAGE_DATA.value:
