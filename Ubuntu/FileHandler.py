@@ -26,4 +26,6 @@ class FileHandler:
     def moveFileFromSourceToClipBoard(self,source):
         # can use factory design pattern to handle in different
         # opearting system
-        os.system(f" osascript -e 'set the clipboard to POSIX file \"{source}\"'")
+        # right now I am using this command for mac os 
+        command = f"/usr/bin/osascript -e 'set the clipboard to POSIX file \"{source}\"'"
+        os.system(command)

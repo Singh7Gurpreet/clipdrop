@@ -27,5 +27,13 @@ class HttpRequestFileHandler:
         
         return os.path.abspath(fileName)
   
-  def upload(self,link,filePath):
-    pass
+  async def upload(self, link, filePath):
+        with open(filePath, "rb") as f:
+            data = f.read()
+
+        async with httpx.AsyncClient() as client:
+            response = await client.put(link, content=data)
+            response.raise_for_status()
+
+        print(f"✅ Uploaded {os.path.basename(filePath)} successfully.")
+        return response.status_code

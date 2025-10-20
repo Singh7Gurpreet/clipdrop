@@ -1,53 +1,57 @@
 import pyperclip
-
-'''
-In this python script I m going to write the code logic in this way
-
-First there would be main async main function which will be executed
-in that we will first create object key which will handle everything
-related to authentication and then it will use that for sending it with cookie
-now 
-
-clipboard main loop would be just work on polling system it first checks clipboard
-action that is there any change in that content if yes then store that time and content
-and it will also send GET /api/file request.
-
-Now we have three cases as following:
-
-Case 1:
-We have GET request result as 404 not found and we proceed with clipboard actions
-which will send text file containg content of that clipboard in POST /api/file
-
-Case 2:
-We have got that there is no change in clipboard but we got 200 in GET /api/file
-so we will fetch all content into a string and store in a clip board
-
-'''
+import asyncio
+import threading
 
 class Clipboard:
-  
-  def __init__(self):
-    self.content = None
-  
-  def isChanged(self):
-    result = (self.content != self.getClipboardContent() and self.getClipboardContent() != "")
-    self.content = self.getClipboardContent()
-    return result
+    _instance = None
+    _instance_lock = threading.Lock()   # lock for singleton creation
 
-  def copy(self,content):
-    pyperclip.copy(content)
-  
-  def getClipboardContent(self):
-    return pyperclip.paste()
-  
-  def saveToFile(self):
-    with open("text.txt","w") as file:
-      file.write(self.getClipboardContent())
-  
-  async def readFromFile(self):
-    content = ""
-    with open("text.txt","r") as file:
-        content += file.read()
-    print(content)
-    return content
-  
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            with cls._instance_lock:
+                if not cls._instance:
+                    cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        # prevent reinitialization if instance already exists
+        if hasattr(self, "_initialized") and self._initialized:
+            return
+
+        self.content = None
+        self._lock = threading.Lock()
+        self._suppress_next = False
+        self._initialized = True  
+
+    def isChanged(self):
+        """Return True if clipboard content changed since last check."""
+        with self._lock:
+            if self._suppress_next:
+                self._suppress_next = False
+                return False
+
+            current = pyperclip.paste()
+            changed = (self.content != current and current != "")
+            self.content = current
+            return changed
+
+    def copy(self, content):
+        with self._lock:
+            self._suppress_next = True
+            self.content = content
+            pyperclip.copy(content)
+
+    def getClipboardContent(self):
+        with self._lock:
+            return pyperclip.paste()
+
+    def saveToFile(self, filename="text.txt"):
+        with self._lock, open(filename, "w", encoding="utf-8") as file:
+            file.write(self.getClipboardContent())
+
+    async def readFromFile(self, filename="text.txt"):
+        async with asyncio.Lock():  # minor protection for async context
+            with open(filename, "r", encoding="utf-8") as file:
+                content = file.read()
+            print(content)
+            return content

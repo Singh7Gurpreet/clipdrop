@@ -58,7 +58,7 @@ class PersonalBinApi:
       payLoadForStorage = {
         "fileName":f"{fileName}"
       }
-      return await self._request("BACKEND_URL_STORAGE", "post", self.payLoadForClipBoard)
+      return await self._request("BACKEND_URL_STORAGE", "post", payLoadForStorage)
 
   async def get_download_link_storage(self):
       return await self._request("BACKEND_URL_STORAGE", "get")
