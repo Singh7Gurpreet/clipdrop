@@ -8,7 +8,7 @@ from BLEClipboardEventHandler import BLEClipboardEventHandler
 
 CLIPBOARD_CONTENT_FILE_NAME = "text.txt"
 
-#   Now I am left with the storage part and android part then 
+#   Now I am left with the storage-api part and android part then 
 #  I am finally done with this he heheheheh :)
 async def func1():
     api = PersonalBinApi()

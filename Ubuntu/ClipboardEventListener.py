@@ -15,12 +15,13 @@ class ClipboardEvent:
         self.subscribers: list[Callable[[str], Awaitable[None]]] = []
         self.interval = interv
 
-    def subscribe(self, callback: Callable[[str], Awaitable[None]]):
+    def subscribe(self, callback: Callable[[str,bool], Awaitable[None]]):
         self.subscribers.append(callback)
 
     async def check_once(self):
         if self.clipMonitor.isChanged():
             value: str = self.clipMonitor.getClipboardContent()
+            
             for subs in self.subscribers:
                 asyncio.create_task(subs(value))
 

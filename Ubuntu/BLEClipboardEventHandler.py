@@ -15,7 +15,6 @@ class BLEClipboardEventHandler(EventHandler):
         api.set_cookie(jwtToken.getKeyValue())
         #END
         response = await api.get_download_link_clipboard()
-        print(response)
         httpRequestFileHandler = HttpRequestFileHandler()
         await httpRequestFileHandler.download(response['link'],response['fileName'])
         fileHandler = FileHandler(response['fileName'])

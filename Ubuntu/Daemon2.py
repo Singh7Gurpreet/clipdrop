@@ -5,9 +5,6 @@
 =============
 '''
 
-# import asyncio
-# from bleak import BleakScanner, BleakClient
-
 SERVICE_UUID = "0ce78b36-0c84-43eb-8244-000000000000"
 UUID_NOTIFY = "0ce78b36-0c84-43eb-8244-000000000001"
 UUID_WRITE  = "0ce78b36-0c84-43eb-8244-000000000002"
@@ -58,6 +55,7 @@ class Daemon2:
     await self.bleClient.connect()
     asyncio.create_task(self.bleClient.start_notifications())
   
+  #focus on this for watching callbacks
   def setupBleCallbacks(self):
     def fromAndroidToLaptop(event):
       print("Android to laptop")
@@ -65,19 +63,26 @@ class Daemon2:
       asyncio.create_task(handler.execute())
     self.bleClient.on_receive(UUID_NOTIFY,fromAndroidToLaptop)
   
-  async def saveClipBoardContentAndUpload(self,clipboardValue):
+  async def __saveClipBoardContentAndUpload(self,clipboardValue):
         fileHandler = FileHandler(CLIPBOARD_CONTENT_FILE_NAME)
         fileHandler.write_to_file(clipboardValue)
         response = await self.api.get_upload_link_clipboard()
-        print(response)
         httpFileHandler = HttpRequestFileHandler()
         await httpFileHandler.upload(response['link'],CLIPBOARD_CONTENT_FILE_NAME)
     
 
+  def handleClipboard(clipboardValue):
+    print(clipboardValue)
+
+  def handleStorageEvent(fileLocation):
+    print(fileLocation)
+
   def setupOnChangeClipboard(self):
-    def clipboardChanged(clipboardValue):
+    async def clipboardChanged(clipboardValue):
+      # check wether it is a file or not if yes then do that part
+      # else do the same as clipboard handler 
       print("🖥️ Clipboard changed, sending event to Android...")
-      self.__saveClipBoardContentAndUpload(clipboardValue)
+      await self.__saveClipBoardContentAndUpload(clipboardValue)
       print(clipboardValue)
       #sending event through BLE to android
       asyncio.create_task(self.bleClient.emit(UUID_WRITE, "CLIPBOARD"))

@@ -53,5 +53,4 @@ class Clipboard:
         async with asyncio.Lock():  # minor protection for async context
             with open(filename, "r", encoding="utf-8") as file:
                 content = file.read()
-            print(content)
             return content
