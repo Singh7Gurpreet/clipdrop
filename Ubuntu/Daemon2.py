@@ -18,6 +18,9 @@ from FileHandler import FileHandler
 from PersonalBinApi import PersonalBinApi
 from HttpRequestFileHandler import HttpRequestFileHandler
 from datetime import datetime
+# will change it later on to factory pattern for supporting windows
+# hehehehehe :))
+from ClipboardFileFetcher import ClipboardFilesFetcherMacOs
 '''
 self.clipboardEventListener.subscribe()
 emits ble event write charactersistics which notifies android for this 
@@ -50,7 +53,6 @@ class Daemon2:
         print("Connection Dropped",datetime.now().time)
       await asyncio.sleep(15)
   
-  #To focus on for a while 2
   async def connectBleDevice(self):
     await self.bleClient.connect()
     asyncio.create_task(self.bleClient.start_notifications())
@@ -59,7 +61,7 @@ class Daemon2:
   def setupBleCallbacks(self):
     def fromAndroidToLaptop(event):
       print("Android to laptop")
-      handler = eventFactory(event)
+      handler = eventFactory(event,self.api)
       asyncio.create_task(handler.execute())
     self.bleClient.on_receive(UUID_NOTIFY,fromAndroidToLaptop)
   
@@ -69,23 +71,31 @@ class Daemon2:
         response = await self.api.get_upload_link_clipboard()
         httpFileHandler = HttpRequestFileHandler()
         await httpFileHandler.upload(response['link'],CLIPBOARD_CONTENT_FILE_NAME)
-    
-
-  def handleClipboard(clipboardValue):
+  
+  async def __getFileLocationAndUpload(self,fileLocation,fileName):
+        response = await self.api.get_upload_link_storage(fileName= fileName)
+        print(response)
+        httpFileHandler = HttpRequestFileHandler()
+        await httpFileHandler.upload(response['link'],fileLocation)
+  async def handleClipboardEvent(self,clipboardValue):
     print(clipboardValue)
+    await self.__saveClipBoardContentAndUpload(clipboardValue)
+    asyncio.create_task(self.bleClient.emit(UUID_WRITE, "CLIPBOARD"))
 
-  def handleStorageEvent(fileLocation):
+  async def handleStorageEvent(self,fileLocation, fileName):
     print(fileLocation)
+    await self.__getFileLocationAndUpload(fileLocation=fileLocation,fileName=fileName)
+    asyncio.create_task(self.bleClient.emit(UUID_WRITE, "STORAGE"))
 
   def setupOnChangeClipboard(self):
     async def clipboardChanged(clipboardValue):
-      # check wether it is a file or not if yes then do that part
-      # else do the same as clipboard handler 
-      print("🖥️ Clipboard changed, sending event to Android...")
-      await self.__saveClipBoardContentAndUpload(clipboardValue)
-      print(clipboardValue)
-      #sending event through BLE to android
-      asyncio.create_task(self.bleClient.emit(UUID_WRITE, "CLIPBOARD"))
+      
+      fileChecker = ClipboardFilesFetcherMacOs()
+      isFile, filePath = fileChecker.isFile(clipboardValue)
+      if isFile == True:
+        await self.handleStorageEvent(filePath,clipboardValue)
+      else:
+        await self.handleClipboardEvent(clipboardValue)
     self.clipboardEventListener.subscribe(clipboardChanged)
 
 async def intMain():

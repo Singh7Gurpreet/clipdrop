@@ -28,4 +28,5 @@ class FileHandler:
         # opearting system
         # right now I am using this command for mac os 
         command = f"/usr/bin/osascript -e 'set the clipboard to POSIX file \"{source}\"'"
+        print(command)
         os.system(command)

@@ -1,5 +1,6 @@
 import pyperclip
 import asyncio
+import os
 import threading
 
 class Clipboard:
@@ -40,6 +41,13 @@ class Clipboard:
             self._suppress_next = True
             self.content = content
             pyperclip.copy(content)
+
+    def saveFileToClipboard(self,source):
+        with self._lock:
+            self._suppress_next = True
+            command = f"/usr/bin/osascript -e 'set the clipboard to POSIX file \"{os.path.abspath(source)}\"'"
+            print(command)
+            os.system(command)
 
     def getClipboardContent(self):
         with self._lock:
