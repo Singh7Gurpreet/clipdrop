@@ -7,10 +7,15 @@ I needed something very similar to AirDrop like for Android to macOS. One of my 
 ## Technologies Used:
 
 HTTP Server: Node.js, deployed on Render service.
+
 Background Daemon for macOS: Python
+
 Android application: Java
+
 Cloud Storage Service: AWS S3 (single bucket only)
+
 Authentication: Google OAuth
+
 Local Communication: Bluetooth Low Energy(added in 2nd iteration of application).
 
 ## Documented Learning/ Brain Dump:
