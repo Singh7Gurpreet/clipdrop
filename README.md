@@ -28,31 +28,29 @@ You can instantly copy text or share files from Android → macOS or vice versa 
 - 🪶 **Lightweight metadata model:**  
   Uses a structured naming convention in S3 —  
 
-Hashed(JWT_TOKEN)__DELIMIT__Clipboard__DELIMIT__filename.ext
-Hashed(JWT_TOKEN)__DELIMIT__Storage__DELIMIT__filename.ext
+- Hashed(JWT_TOKEN)__DELIMIT__Clipboard__DELIMIT__filename.ext
+- Hashed(JWT_TOKEN)__DELIMIT__Storage__DELIMIT__filename.ext
 
 This removes the need for a dedicated database such as Redis.
 
 ---
 
 ## 🧩 What’s Missing
-- ❌ **Cross-platform clipboard integration** for Windows and Ubuntu  
-- ⚠️ **End-to-end encryption** for clipboard data  
+- ❌ **Cross-platform clipboard integration** for Windows and Ubuntu
+- ⚠️ **End-to-end encryption** for clipboard data
 - 🪪 **Multi-device account linking** (currently one Android ↔ one Mac)  
-- 📤 **Automatic background uploads** on Android  
 - 🧱 **UI layer** for viewing and managing transferred files  
-- 🧹 **Error handling & reconnection logic** for BLE and S3 network drops  
+- 🧹 **Error handling & reconnection logic** for BLE and S3 network drops
 
 ---
 
 ## 🗺️ Roadmap / What’s Next
-- [ ] Add **Windows daemon** using .NET or Python for clipboard sync  
-- [ ] Implement **Ubuntu version** with custom clipboard save logic  
-- [ ] Introduce **real-time sync** using WebSockets or MQTT  
-- [ ] Add **file preview and history** on both Android & macOS  
-- [ ] Encrypt clipboard data before uploading to S3  
-- [ ] Build a **unified desktop UI** for managing transfers and logs  
-- [ ] Publish as an open-source project for community testing  
+- [ ] Add **Windows daemon** using Python for clipboard sync
+- [ ] Implement **Ubuntu version** with custom clipboard save logic 
+- [ ] Add **file preview and history** on both Android & macOS
+- [ ] Encrypt clipboard data before uploading to S3
+- [ ] Build a **unified desktop UI** for managing transfers and logs
+- [ ] Publish as an open-source project for community testing
 
 ---
 
